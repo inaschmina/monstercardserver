@@ -1,11 +1,15 @@
 package directive;
 
+import card.PackageHandler;
 import db.UserDBHandler;
 import org.codehaus.jackson.JsonNode;
+
+import java.util.Objects;
 
 
 public class MethodManager_Impl implements DirectiveManager {
     UserDBHandler userDB = new UserDBHandler();
+    PackageHandler packageHandler = new PackageHandler();
     String returnValue;
 
     @Override
@@ -23,7 +27,10 @@ public class MethodManager_Impl implements DirectiveManager {
         switch (path) {
             case "/users" -> this.returnValue = userDB.createUser(body);
             case "/sessions"-> this.returnValue = userDB.loginUser(body);
-            case "/packages"-> this.returnValue = "";
+            case "/packages" -> {
+                if(Objects.equals(username, "admin"))this.returnValue = packageHandler.createPackage(body);
+                else return "false";
+            }
             case "/transactions/packages"-> this.returnValue = "";
             case "/tradings"-> this.returnValue = "";
             case "/battles"-> this.returnValue = "";
