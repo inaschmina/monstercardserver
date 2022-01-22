@@ -46,19 +46,28 @@ public class server implements Runnable{
             username = authorization.split("Basic ")[1].split("-")[0];
         }
 
-        //read body
-        int contentLength = headers.size();
-        StringBuilder bodyBuilder = new StringBuilder(10000);
-        char[] buf = new char[1024];
-        int totalLen = 0;
-        int len;
-        while ((len = br.read(buf)) != -1) {
-            bodyBuilder.append(buf, 0, len);
-            totalLen += len;
-            if( totalLen >= contentLength )
-                break;
-        }
-        String body = bodyBuilder.toString();
+        //get body length
+        String bodyLength = headers.toString().split("Content-Length: ")[1].split("]")[0];
+        String body;
+        if(Integer.parseInt(bodyLength) != 0) {
+            //read body only if not null
+            int contentLength = headers.size();
+            StringBuilder bodyBuilder = new StringBuilder(10000);
+            char[] buf = new char[1024];
+            int totalLen = 0;
+            int len;
+            while ((len = br.read(buf)) != -1) {
+                bodyBuilder.append(buf, 0, len);
+                totalLen += len;
+                if( totalLen >= contentLength )
+                    break;
+            }
+            body = bodyBuilder.toString();
+        } else body = "";
+
+
+
+
 
         //convert body to JSON
         JsonNode node = null;

@@ -14,7 +14,7 @@ public class CardDBHandler extends DBconnection {
             """);
             preparedStatement.setString(1, credentials.get("Id").getTextValue());
             preparedStatement.setString(2, credentials.get("Name").getTextValue());
-            preparedStatement.setDouble(3, credentials.get("Damage").asDouble());
+            preparedStatement.setDouble(3, Double.parseDouble(credentials.get("Damage").getValueAsText()));
             preparedStatement.setString(4, element);
             preparedStatement.setInt(5, packageID);
             preparedStatement.setString(6, user);
@@ -28,24 +28,19 @@ public class CardDBHandler extends DBconnection {
         return "true";
     }
 
-    public int insertPackage() {
-        int returnValue = 0;
+
+    public void updateOwnership(String username, int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("""
-            INSERT INTO package (owner)
-            VALUES (?)
-            RETURNING id
+            UPDATE cards SET "user" = ?
+            WHERE package_id = ?
             """);
-            preparedStatement.setString(1, "null");
-            ResultSet rs= preparedStatement.executeQuery();
-            rs.next();
-            returnValue = rs.getInt(1);
-            preparedStatement.close();
+            preparedStatement.setString(1, username);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            throwables.printStackTrace();
         }
-        return returnValue;
     }
 
-
-    }
+}

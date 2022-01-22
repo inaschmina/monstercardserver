@@ -31,7 +31,7 @@ public class MethodManager_Impl implements DirectiveManager {
                 if(Objects.equals(username, "admin"))this.returnValue = packageHandler.createPackage(body);
                 else return "false";
             }
-            case "/transactions/packages"-> this.returnValue = "";
+            case "/transactions/packages"-> this.returnValue = packageHandler.aquirePackgae(body, username, 5);
             case "/tradings"-> this.returnValue = "";
             case "/battles"-> this.returnValue = "";
         }

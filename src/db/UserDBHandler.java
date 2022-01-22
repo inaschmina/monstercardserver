@@ -46,4 +46,38 @@ public class UserDBHandler extends DBconnection{
         }
         return "action failed";
     }
+
+    public int getUserCoins(String username) {
+        int coins = 0;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("""
+            SELECT coins FROM users
+            WHERE username=?
+            """);
+            preparedStatement.setString(1, username);
+            ResultSet result = preparedStatement.executeQuery();
+            if(result.next()) coins = result.getInt(1);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return coins;
+    }
+
+    public void updateUserCoins(int newCoinValue, String username) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("""
+            UPDATE users SET coins = ?
+            WHERE username=?
+            """);
+            preparedStatement.setInt(1, newCoinValue);
+            preparedStatement.setString(2, username);
+            preparedStatement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+
+
+
 }
