@@ -56,9 +56,11 @@ public class UserDBHandler extends DBconnection{
             """);
             preparedStatement.setString(1, username);
             ResultSet result = preparedStatement.executeQuery();
-            if(result.next()) resultString.append("Username: ").append(result.getString(1))
-                    .append(" Coins: ").append(result.getInt(3)).append(" Bio: ").append(result.getString(4))
-                    .append(" Image: ").append(result.getString(5)).append(" Name: ").append(result.getString(6));
+            if(result.next()) resultString.append("{\"username\":\"").append(result.getString(1))
+                    .append("\", \"coins\":\"").append(result.getInt(3))
+                    .append("\", \"bio\":\"").append(result.getString(4))
+                    .append("\", \"image\":\"").append(result.getString(5))
+                    .append("\", \"name\":\"").append(result.getString(6)).append("\"}");
             String s = resultString.toString();
             preparedStatement.close();
             connection.close();
@@ -98,8 +100,10 @@ public class UserDBHandler extends DBconnection{
             ResultSet result = preparedStatement.executeQuery();
 
             String s = "";
-            if(result.next()) s = returnString.append("User: ").append(username).append(" Won: ").append(result.getInt(1)).append(" Lost: ")
-                    .append(result.getInt(2)).append(" ELO: ").append(result.getInt(3)).toString();
+            if(result.next()) s = returnString.append("{\"user\":\"").append(username)
+                    .append("\", \"won\":\"").append(result.getInt(1))
+                    .append("\", \"lost\":\"").append(result.getInt(2))
+                    .append("\", \"elo\":\"").append(result.getInt(3)).append("\"}").toString();
             preparedStatement.close();
             connection.close();
             return s;
@@ -151,8 +155,8 @@ public class UserDBHandler extends DBconnection{
             SELECT username, elo FROM users
             """);
             ResultSet result = preparedStatement.executeQuery();
-            while(result.next()) returnString.append("User: ").append(result.getString(1)).append(" ELO: ")
-                    .append(result.getInt(2)).append("\r\n");
+            while(result.next()) returnString.append("{\"user\":\"").append(result.getString(1))
+                    .append("\", \"elo\":\"").append(result.getInt(2)).append("\"}\r\n");
             String s = returnString.toString();
             preparedStatement.close();
             connection.close();

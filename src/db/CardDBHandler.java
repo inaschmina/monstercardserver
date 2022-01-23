@@ -56,11 +56,13 @@ public class CardDBHandler extends DBconnection {
             preparedStatement.setString(1, username);
             ResultSet result = preparedStatement.executeQuery();
             while(result.next()) {
-                resultString.append("ID: ").append(result.getString(1)).append(" Name: ")
-                        .append(result.getString(2)).append(" Damage: ").append(result.getDouble(3))
-                        .append(" Element: ").append(result.getString(4)).append(" Package ID: ")
-                        .append(result.getInt(5)).append(" Deck: ").append(result.getBoolean(7))
-                        .append("\r\n");
+                resultString.append("{\"id\":\"").append(result.getString(1))
+                        .append("\", \"name\":\"").append(result.getString(2))
+                        .append("\", \"damage\":\"").append(result.getDouble(3))
+                        .append("\", \"element\":\"").append(result.getString(4))
+                        .append("\", \"package_id\":\"").append(result.getInt(5))
+                        .append("\", \"deck\":\"").append(result.getBoolean(7))
+                        .append("\"}\r\n");
             }
             String returnString = resultString.toString();
             preparedStatement.close();
@@ -113,10 +115,11 @@ public class CardDBHandler extends DBconnection {
             }
             else {
                 while(result.next()) {
-                    resultString.append("ID: ").append(result.getString(1)).append(" Name: ")
-                            .append(result.getString(2)).append(" Damage: ").append(result.getDouble(3))
-                            .append(" Element: ").append(result.getString(4)).append(" Package ID: ")
-                            .append(result.getInt(5)).append("\r\n");
+                    resultString.append("{\"id\":\"").append(result.getString(1))
+                            .append("\", \"name\":\"").append(result.getString(2))
+                            .append("\", \"damage\":\"").append(result.getDouble(3))
+                            .append("\", \"element\":\"").append(result.getString(4))
+                            .append("\", \"package_id\":\"").append(result.getInt(5)).append("\"}\r\n");
                 }
             }
             s = resultString.toString();
