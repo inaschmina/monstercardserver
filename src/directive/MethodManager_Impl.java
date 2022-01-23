@@ -1,8 +1,9 @@
 package directive;
 
 import card.CardHandler;
-import card.PackageHandler;
+import packages.PackageHandler;
 import org.codehaus.jackson.JsonNode;
+import tradings.TradingsHandler;
 import user.UserHandler;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ public class MethodManager_Impl implements DirectiveManager {
     UserHandler userHandler = new UserHandler();
     PackageHandler packageHandler = new PackageHandler();
     CardHandler cardHandler = new CardHandler();
+    TradingsHandler tradingHandler = new TradingsHandler();
     String returnValue;
 
     @Override
@@ -24,13 +26,18 @@ public class MethodManager_Impl implements DirectiveManager {
         switch (directive.toUpperCase()) {
             case "POST" -> this.returnValue = postRequest(path, body, username);
             case "GET" -> this.returnValue = getRequest(path, username);
-            case "DELETE" -> this.returnValue = deleteRequest(path, body);
+            case "DELETE" -> this.returnValue = deleteRequest(path);
             case "PUT" -> this.returnValue = putRequest(path, body, username);
         }
         return this.returnValue;
     }
 
     private String postRequest(String path, JsonNode body, String username) {
+        String tradingId = "";
+        if(path.contains("tradings/")){
+            tradingId = path.split("/tradings/")[1];
+            path = "/tradings/";
+        }
         switch (path) {
             case "/users" -> this.returnValue = userHandler.createUser(body);
             case "/sessions"-> this.returnValue = userHandler.loginUser(body);
@@ -39,7 +46,8 @@ public class MethodManager_Impl implements DirectiveManager {
                 else return "not authorized";
             }
             case "/transactions/packages"-> this.returnValue = packageHandler.aquirePackgae(body, username, 5);
-            case "/tradings"-> this.returnValue = "";
+            case "/tradings"-> this.returnValue = tradingHandler.createTradingDeal(body);
+            case "/tradings/" -> this.returnValue = tradingHandler.trade(body, tradingId, username);
             case "/battles"-> this.returnValue = "";
         }
         return this.returnValue;
@@ -56,14 +64,19 @@ public class MethodManager_Impl implements DirectiveManager {
             case "/users"-> this.returnValue = userHandler.getUserData(username);
             case "/stats"-> this.returnValue = userHandler.getStats(username);
             case "/score"-> this.returnValue = userHandler.getScoreboard();
-            case "/tradings"-> this.returnValue = "";
+            case "/tradings"-> this.returnValue = tradingHandler.checkTradingDeals();
         }
         return this.returnValue;
     }
 
-    private String deleteRequest(String path, JsonNode body) {
+    private String deleteRequest(String path) {
+        String tradingId = "";
+        if(path.contains("tradings/")){
+            tradingId = path.split("/tradings/")[1];
+            path = "/tradings";
+        }
         switch (path) {
-            case "/tradings"-> this.returnValue = "";
+            case "/tradings"-> this.returnValue = tradingHandler.deleteTradeOffer(tradingId);
         }
         return this.returnValue;
     }

@@ -1,25 +1,26 @@
 package db;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PackageDBHandler extends DBconnection {
+public class PackageDBHandler {
 
     public int insertPackage(int cost) {
         int returnValue = 0;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             INSERT INTO package (cost)
             VALUES (?)
             RETURNING id
             """);
             preparedStatement.setInt(1, cost);
             ResultSet rs= preparedStatement.executeQuery();
-            rs.next();
-            returnValue = rs.getInt(1);
+            if(rs.next()) returnValue = rs.getInt(1);
             preparedStatement.close();
-            connection.close();
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -31,15 +32,16 @@ public class PackageDBHandler extends DBconnection {
     public int selectPackage() {
         int returnInt = 0;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT (id) FROM package
             ORDER BY "id"
             LIMIT 1
             """);
             ResultSet result = preparedStatement.executeQuery();
             if(result.next()) returnInt = result.getInt(1);
-            //preparedStatement.close();
-            //connection.close();
+            preparedStatement.close();
+            conn.close();
             return returnInt;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -49,14 +51,15 @@ public class PackageDBHandler extends DBconnection {
 
     public void deletePackage(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             DELETE FROM package
             WHERE id = ?
             """);
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
-            //preparedStatement.close();
-            //connection.close();
+            preparedStatement.close();
+            conn.close();
         } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

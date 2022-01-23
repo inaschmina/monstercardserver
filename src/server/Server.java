@@ -8,9 +8,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-public class server implements Runnable{
+public class Server implements Runnable{
     public Socket socket;
-    public server(Socket socket) {
+    public Server(Socket socket) {
         this.socket = socket;
     }
 

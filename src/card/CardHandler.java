@@ -33,12 +33,8 @@ public class CardHandler {
     public String createDeck(JsonNode credentials, String username) {
         String returnString = "false";
         for( int i = 0; i < 4; i++) {
-            try {
-                if (credentials.get(i) == null) return "not enough crads to configure deck";
-                returnString = db.insertDeck(credentials.get(i).getTextValue(), username);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            if (credentials.get(i) == null) return "not enough crads to configure deck";
+            returnString = db.insertDeck(credentials.get(i).getTextValue(), username);
         }
         return returnString;
     }
@@ -51,5 +47,17 @@ public class CardHandler {
 
     public void updateOwnership(String username, int id) {
         db.updatePackageOwner(username, id);
+    }
+
+    public String getOwnerFromCard(String id) {
+        return db.selectOwnerToId(id);
+    }
+
+    public String updateOwner(String id, String username) {
+        return db.updateOwnerToId(id, username);
+    }
+
+    public String lockOrUnlockCard(String id, boolean lock) {
+        return db.UnLockCard(id, lock);
     }
 }

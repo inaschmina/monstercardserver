@@ -5,18 +5,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBconnection {
-    protected Connection connection;
-
-    public DBconnection() {
-        try {
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/swe1user", "swe1user", "swe1pw");
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    protected static DBconnection connection = null;
+    private DBconnection() throws SQLException {
     }
 
-    public Connection getConnection() {
+    public static DBconnection getInstance() throws SQLException {
+        if(connection == null) {
+             connection = new DBconnection();
+
+        }
         return connection;
+    }
+
+    public Connection getConn() throws SQLException {
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/swe1user", "swe1user", "swe1pw");
     }
 }

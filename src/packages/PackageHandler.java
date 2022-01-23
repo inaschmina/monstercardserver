@@ -1,5 +1,6 @@
-package card;
+package packages;
 
+import card.CardHandler;
 import db.CardDBHandler;
 import db.PackageDBHandler;
 import db.UserDBHandler;

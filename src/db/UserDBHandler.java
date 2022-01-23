@@ -2,16 +2,18 @@ package db;
 
 import org.codehaus.jackson.JsonNode;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDBHandler extends DBconnection{
+public class UserDBHandler {
 
     public String insertUser(JsonNode credentials) {
         int returnValue = 0;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             INSERT INTO users (username, password)
             VALUES (?,?)
             """);
@@ -19,7 +21,7 @@ public class UserDBHandler extends DBconnection{
             preparedStatement.setString(2, credentials.get("Password").getTextValue());
             returnValue = preparedStatement.executeUpdate();
             preparedStatement.close();
-            connection.close();
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -29,8 +31,8 @@ public class UserDBHandler extends DBconnection{
 
     public String checkLoginCredentials(JsonNode credentials) {
         try {
-
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT username,password FROM users
             WHERE username=? AND password=?
             """);
@@ -39,7 +41,7 @@ public class UserDBHandler extends DBconnection{
             ResultSet result = preparedStatement.executeQuery();
             String resultString = Boolean.toString(result.next());
             preparedStatement.close();
-            connection.close();
+            conn.close();
             return resultString;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -50,7 +52,8 @@ public class UserDBHandler extends DBconnection{
     public String selectUserData(String username) {
         StringBuilder resultString = new StringBuilder();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT * FROM users
             WHERE username=?
             """);
@@ -63,7 +66,7 @@ public class UserDBHandler extends DBconnection{
                     .append("\", \"name\":\"").append(result.getString(6)).append("\"}");
             String s = resultString.toString();
             preparedStatement.close();
-            connection.close();
+            conn.close();
             return s;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -74,15 +77,16 @@ public class UserDBHandler extends DBconnection{
     public int selectUserCoins(String username) {
         int coins = 0;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT coins FROM users
             WHERE username=?
             """);
             preparedStatement.setString(1, username);
             ResultSet result = preparedStatement.executeQuery();
             if(result.next()) coins = result.getInt(1);
-            //preparedStatement.close();
-            //connection.close();
+            preparedStatement.close();
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -92,7 +96,8 @@ public class UserDBHandler extends DBconnection{
     public String selectUserStats(String username) {
         StringBuilder returnString = new StringBuilder();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT won, lost, elo FROM users
             WHERE username=?
             """);
@@ -105,7 +110,7 @@ public class UserDBHandler extends DBconnection{
                     .append("\", \"lost\":\"").append(result.getInt(2))
                     .append("\", \"elo\":\"").append(result.getInt(3)).append("\"}").toString();
             preparedStatement.close();
-            connection.close();
+            conn.close();
             return s;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -115,15 +120,16 @@ public class UserDBHandler extends DBconnection{
 
     public void updateUserCoins(int newCoinValue, String username) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             UPDATE users SET coins = ?
             WHERE username=?
             """);
             preparedStatement.setInt(1, newCoinValue);
             preparedStatement.setString(2, username);
             preparedStatement.execute();
-            //preparedStatement.close();
-            //connection.close();
+            preparedStatement.close();
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -132,7 +138,8 @@ public class UserDBHandler extends DBconnection{
 
     public void updateUserProfile(JsonNode credentials, String username) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             UPDATE users SET "bio" = ?, "image" = ?, "name" = ?
             WHERE username=?
             """);
@@ -142,7 +149,7 @@ public class UserDBHandler extends DBconnection{
             preparedStatement.setString(4, username);
             preparedStatement.execute();
             preparedStatement.close();
-            connection.close();
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -151,7 +158,8 @@ public class UserDBHandler extends DBconnection{
     public String selectScores() {
         StringBuilder returnString = new StringBuilder();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT username, elo FROM users
             """);
             ResultSet result = preparedStatement.executeQuery();
@@ -159,7 +167,7 @@ public class UserDBHandler extends DBconnection{
                     .append("\", \"elo\":\"").append(result.getInt(2)).append("\"}\r\n");
             String s = returnString.toString();
             preparedStatement.close();
-            connection.close();
+            conn.close();
             return s;
         } catch (SQLException throwables) {
             throwables.printStackTrace();

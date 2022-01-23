@@ -1,14 +1,16 @@
 package db;
 import org.codehaus.jackson.JsonNode;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CardDBHandler extends DBconnection {
+public class CardDBHandler {
 
     public String insertCard(JsonNode credentials, String element, int packageID, String user, boolean deck) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             INSERT INTO cards ("id", "name", "damage", "element", "package_id", "user", "deck")
             VALUES (?,?,?,?,?,?,?)
             """);
@@ -20,8 +22,8 @@ public class CardDBHandler extends DBconnection {
             preparedStatement.setString(6, user);
             preparedStatement.setBoolean(7, deck);
             preparedStatement.execute();
-            //preparedStatement.close();
-            //connection.close();
+            preparedStatement.close();
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             return "false";
@@ -32,7 +34,8 @@ public class CardDBHandler extends DBconnection {
 
     public void updatePackageOwner(String username, int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             UPDATE cards SET "user" = ?
             WHERE package_id = ?
             """);
@@ -40,7 +43,7 @@ public class CardDBHandler extends DBconnection {
             preparedStatement.setInt(2, id);
             preparedStatement.executeUpdate();
             preparedStatement.close();
-            connection.close();
+            conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -49,7 +52,8 @@ public class CardDBHandler extends DBconnection {
     public String selectAllCardsFromUser(String username) {
         StringBuilder resultString = new StringBuilder();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT * FROM "cards"
             WHERE "user" = ?
             """);
@@ -66,7 +70,7 @@ public class CardDBHandler extends DBconnection {
             }
             String returnString = resultString.toString();
             preparedStatement.close();
-            connection.close();
+            conn.close();
             return returnString;
     } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -75,9 +79,10 @@ public class CardDBHandler extends DBconnection {
     }
 
 
-    public String insertDeck(String id, String username) throws SQLException {
+    public String insertDeck(String id, String username){
         try {
-        PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             UPDATE cards SET "deck" = ?
             WHERE "id" = ? AND "user" = ?
             """);
@@ -85,8 +90,8 @@ public class CardDBHandler extends DBconnection {
             preparedStatement.setString(2, id);
             preparedStatement.setString(3, username);
             int resultInt = preparedStatement.executeUpdate();
-            //preparedStatement.close();
-            //connection.close();
+            preparedStatement.close();
+            conn.close();
             if(resultInt > 0) return "deck created";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -98,7 +103,8 @@ public class CardDBHandler extends DBconnection {
         String s = "";
         StringBuilder resultString = new StringBuilder();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("""
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
             SELECT * FROM cards
             WHERE "deck" = ? AND "user" = ?
             """);
@@ -124,12 +130,72 @@ public class CardDBHandler extends DBconnection {
             }
             s = resultString.toString();
             preparedStatement.close();
-            connection.close();
+            conn.close();
             return s;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return "deck not found";
     }
+
+    public String selectOwnerToId(String id) {
+        StringBuilder resultString = new StringBuilder();
+        try {
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+            SELECT "user" FROM "cards"
+            WHERE "id" = ?
+            """);
+            preparedStatement.setString(1, id);
+            ResultSet result = preparedStatement.executeQuery();
+            if(result.next()) resultString.append(result.getString(1));
+            String returnString = resultString.toString();
+            preparedStatement.close();
+            conn.close();
+            return returnString;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return "card not found";
+    }
+
+    public String updateOwnerToId(String id, String username) {
+        try {
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+            UPDATE cards SET "user" = ?
+            WHERE "id" = ?
+            """);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, id);
+            int resultInt = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            conn.close();
+            if(resultInt > 0) return "owner updated";
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return "card not found";
+    }
+
+    public String UnLockCard(String id, boolean lock){
+        try {
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+            UPDATE cards SET "locked_for_trading" = ?
+            WHERE "id" = ?
+            """);
+            preparedStatement.setBoolean(1, lock);
+            preparedStatement.setString(2, id);
+            int resultInt = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            conn.close();
+            if(resultInt > 0) return "card locked";
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return "card not found";
+    }
+
 
 }
