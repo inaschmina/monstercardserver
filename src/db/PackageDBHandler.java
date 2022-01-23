@@ -19,6 +19,7 @@ public class PackageDBHandler extends DBconnection {
             rs.next();
             returnValue = rs.getInt(1);
             preparedStatement.close();
+            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -28,6 +29,7 @@ public class PackageDBHandler extends DBconnection {
 
 
     public int selectPackage() {
+        int returnInt = 0;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("""
             SELECT (id) FROM package
@@ -35,12 +37,14 @@ public class PackageDBHandler extends DBconnection {
             LIMIT 1
             """);
             ResultSet result = preparedStatement.executeQuery();
-            if(result.next()) return result.getInt(1);
-            else return 0;
+            if(result.next()) returnInt = result.getInt(1);
+            //preparedStatement.close();
+            //connection.close();
+            return returnInt;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return 0;
+        return returnInt;
     }
 
     public void deletePackage(int id) {
@@ -51,6 +55,8 @@ public class PackageDBHandler extends DBconnection {
             """);
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
+            //preparedStatement.close();
+            //connection.close();
         } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

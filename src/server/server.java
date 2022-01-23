@@ -6,9 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class server implements Runnable{
     public Socket socket;
@@ -39,31 +37,32 @@ public class server implements Runnable{
         //read header
         String username = "";
         List<String> headers = new ArrayList<>(Arrays.asList(requestsLines).subList(2, requestsLines.length));
-        if (headers.size() > 4) {
-            //get authorization header
-            String authorization = headers.subList(3,4).toString();
+        if (headers.toString().toLowerCase().contains("authorization")) {
             //substract username
-            username = authorization.split("Basic ")[1].split("-")[0];
+            username = headers.toString().split("Basic ")[1].split("-")[0];
         }
 
         //get body length
-        String bodyLength = headers.toString().split("Content-Length: ")[1].split("]")[0];
-        String body;
-        if(Integer.parseInt(bodyLength) != 0) {
-            //read body only if not null
-            int contentLength = headers.size();
-            StringBuilder bodyBuilder = new StringBuilder(10000);
-            char[] buf = new char[1024];
-            int totalLen = 0;
-            int len;
-            while ((len = br.read(buf)) != -1) {
-                bodyBuilder.append(buf, 0, len);
-                totalLen += len;
-                if( totalLen >= contentLength )
-                    break;
+        String body = "";
+        if(headers.toString().contains("Content-Length")) {
+            String bodyLength = headers.toString().split("Content-Length: ")[1].split("]")[0];
+            if(Integer.parseInt(bodyLength) != 0) {
+                //read body only if not null
+                int contentLength = headers.size();
+                StringBuilder bodyBuilder = new StringBuilder(10000);
+                char[] buf = new char[1024];
+                int totalLen = 0;
+                int len;
+                while ((len = br.read(buf)) != -1) {
+                    bodyBuilder.append(buf, 0, len);
+                    totalLen += len;
+                    if( totalLen >= contentLength )
+                        break;
+                }
+                body = bodyBuilder.toString();
             }
-            body = bodyBuilder.toString();
-        } else body = "";
+        }
+
 
 
 
@@ -80,6 +79,7 @@ public class server implements Runnable{
         StringBuilder message = new StringBuilder();
         //call directive handler
         String reply = manager.handleDirective(method, path, node, username);
+
         //write out response
         message.append(version).append(" ").append("200").append(" ").append("baaaaast").append("\r\n");
         message.append("Host: ").append(host).append("\r\n");
