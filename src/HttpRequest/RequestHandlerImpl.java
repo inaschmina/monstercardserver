@@ -1,4 +1,4 @@
-package server;
+package HttpRequest;
 
 import directive.MethodManager_Impl;
 import org.codehaus.jackson.JsonNode;
@@ -8,9 +8,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-public class Server implements Runnable{
+public class RequestHandlerImpl implements Runnable{
     public Socket socket;
-    public Server(Socket socket) {
+    public RequestHandlerImpl(Socket socket) {
         this.socket = socket;
     }
 
@@ -64,10 +64,6 @@ public class Server implements Runnable{
         }
 
 
-
-
-
-
         //convert body to JSON
         JsonNode node = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -81,12 +77,13 @@ public class Server implements Runnable{
         String reply = manager.handleDirective(method, path, node, username);
 
         //write out response
-        message.append(version).append(" ").append("200").append(" ").append("baaaaast").append("\r\n");
+        message.append(version).append(" ").append("200").append(" ").append("OK").append("\r\n");
         message.append("Host: ").append(host).append("\r\n");
         message.append("Content-type: ").append("application/json").append("\r\n");
         message.append("Content-length: ").append(reply.length()).append("\r\n");
         message.append("\r\n").append(reply).append("\r\n");
         writer.write(message.toString());
+        writer.flush();
         writer.close();
 
 

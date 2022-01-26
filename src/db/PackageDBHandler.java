@@ -21,13 +21,12 @@ public class PackageDBHandler {
             if(rs.next()) returnValue = rs.getInt(1);
             preparedStatement.close();
             conn.close();
+            return returnValue;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return returnValue;
     }
-
-
 
     public int selectPackage() {
         int returnInt = 0;

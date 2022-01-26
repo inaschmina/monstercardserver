@@ -28,7 +28,7 @@ public class UserHandler {
 
     public String updateProfile(JsonNode credentials, String username) {
         db.updateUserProfile(credentials, username);
-        return "profile updated";
+        return "{\"code\": \"200\", \"message\": \"user profile updated\"}";
     }
 
     public String getStats(String username) {
@@ -39,5 +39,8 @@ public class UserHandler {
         return db.selectScores();
     }
 
+    public int getELO(String username) {
+        return db.selectELO(username);
+    }
 
 }

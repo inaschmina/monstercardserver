@@ -26,9 +26,9 @@ public class CardDBHandler {
             conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            return "false";
+            return "{\"code\": \"400\", \"message\": \"card was not inserted\"}";
         }
-        return "true";
+        return "{\"code\": \"200\", \"message\": \"card was created successfully\"}";
     }
 
 
@@ -68,14 +68,14 @@ public class CardDBHandler {
                         .append("\", \"deck\":\"").append(result.getBoolean(7))
                         .append("\"}\r\n");
             }
-            String returnString = resultString.toString();
+            String returnString = "{\"code\": \"200\", \"message\": \"" + resultString.toString() +" \"}";
             preparedStatement.close();
             conn.close();
             return returnString;
     } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return resultString.toString();
+        return "{\"code\": \"404\", \"message\": \"select cards failed\"}";
     }
 
 
@@ -92,11 +92,11 @@ public class CardDBHandler {
             int resultInt = preparedStatement.executeUpdate();
             preparedStatement.close();
             conn.close();
-            if(resultInt > 0) return "deck created";
+            if(resultInt > 0) return "{\"code\": \"200\", \"message\": \"deck created\"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "deck not created";
+        return "{\"code\": \"400\", \"message\": \"failed to create deck\"}";
     }
 
     public String selectDeck(String username, Boolean plain) {
@@ -135,7 +135,7 @@ public class CardDBHandler {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "deck not found";
+        return s;
     }
 
     public String selectOwnerToId(String id) {
@@ -152,11 +152,11 @@ public class CardDBHandler {
             String returnString = resultString.toString();
             preparedStatement.close();
             conn.close();
-            return returnString;
+            return "{\"code\": \"200\", \"message\": \""+ returnString + "\"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "card not found";
+        return "{\"code\": \"404\", \"message\": \"owner not found\"}";
     }
 
     public String updateOwnerToId(String id, String username) {
@@ -171,11 +171,11 @@ public class CardDBHandler {
             int resultInt = preparedStatement.executeUpdate();
             preparedStatement.close();
             conn.close();
-            if(resultInt > 0) return "owner updated";
+            if(resultInt > 0) return "{\"code\": \"200\", \"message\": \"owner updated\"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "card not found";
+        return "{\"code\": \"404\", \"message\": \"card not found\"}";
     }
 
     public String UnLockCard(String id, boolean lock){
@@ -190,11 +190,11 @@ public class CardDBHandler {
             int resultInt = preparedStatement.executeUpdate();
             preparedStatement.close();
             conn.close();
-            if(resultInt > 0) return "card locked";
+            if(resultInt > 0) return "{\"code\": \"200\", \"message\": \"card (un)locked\"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "card not found";
+        return "{\"code\": \"404\", \"message\": \"card not found\"}";
     }
 
 

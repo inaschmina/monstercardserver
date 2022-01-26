@@ -31,7 +31,7 @@ public class TradingsHandler {
         CardHandler cardHandler = new CardHandler();
         String cardId = db.selectCardToTradeId(tradingID);
         String cardOwner = cardHandler.getOwnerFromCard(cardId);
-        if(Objects.equals(user, cardOwner)) return "card already belongs to this user";
+        if(Objects.equals(user, cardOwner)) return "{\"code\": \"400\", \"message\": \"card already belongs to this user\"}";
         cardHandler.updateOwner(cardId, user);
         String returnString = cardHandler.updateOwner(credentials.getTextValue(), cardOwner);
         cardHandler.lockOrUnlockCard(cardId, false);

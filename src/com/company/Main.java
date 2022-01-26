@@ -3,7 +3,7 @@ package com.company;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import server.Server;
+import HttpRequest.RequestHandlerImpl;
 
 public class Main {
 
@@ -13,7 +13,7 @@ public class Main {
 
             while (true) {
                 Socket client = serverSocket.accept();
-                Server server = new Server(client);
+                RequestHandlerImpl server = new RequestHandlerImpl(client);
                 Thread thread = new Thread(server);
                 thread.start();
             }

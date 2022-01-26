@@ -27,11 +27,11 @@ public class TradingsDBHandler {
             String returnString = resultString.toString();
             preparedStatement.close();
             conn.close();
-            if(!returnString.equals("")) return returnString;
+            if(!returnString.equals("")) return "{\"code\": \"200\", \"message\": \"" + resultString +" \"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "no tradings found";
+        return "{\"code\": \"404\", \"message\": \"select of tradings failed\"}";
     }
 
     public String insertTrade(JsonNode credentials) {
@@ -52,8 +52,8 @@ public class TradingsDBHandler {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        if(returnValue == 0) return "false";
-        else return "true";
+        if(returnValue == 0) return "{\"code\": \"400\", \"message\": \"failed to create trade\"}";
+        else return "{\"code\": \"200\", \"message\": \"trade created\"}";
     }
 
     public String deleteTrade(String id) {
@@ -67,11 +67,11 @@ public class TradingsDBHandler {
             preparedStatement.execute();
             preparedStatement.close();
             conn.close();
-            return "true";
+            return "{\"code\": \"200\", \"message\": \"trading deleted\"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "false";
+        return "{\"code\": \"400\", \"message\": \"delete of trading failed\"}";
     }
 
 

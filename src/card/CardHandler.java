@@ -27,13 +27,13 @@ public class CardHandler {
     }
 
     public String getAllCardsFromUser(String username) {
-        return db.selectAllCardsFromUser(username);
+        return "{\"code\": \"200\", \"message\": \"{"+ db.selectAllCardsFromUser(username) +"}\"}";
     }
 
     public String createDeck(JsonNode credentials, String username) {
-        String returnString = "false";
+        String returnString = "{\"code\": \"200\", \"message\": \"creating deck failed\"}";
         for( int i = 0; i < 4; i++) {
-            if (credentials.get(i) == null) return "not enough crads to configure deck";
+            if (credentials.size() != 4) return "{\"code\": \"400\", \"message\": \"deck must consist of four cards\"}";
             returnString = db.insertDeck(credentials.get(i).getTextValue(), username);
         }
         return returnString;
@@ -41,7 +41,7 @@ public class CardHandler {
 
     public String getDeck(String username, Boolean plain) {
         String returnString = db.selectDeck(username, plain);
-        if(Objects.equals(returnString, "")) return "no deck configured";
+        if(Objects.equals(returnString, "")) return "{\"code\": \"400\", \"message\": \"no deck configured\"}";
         else return returnString;
     }
 
@@ -57,7 +57,7 @@ public class CardHandler {
         return db.updateOwnerToId(id, username);
     }
 
-    public String lockOrUnlockCard(String id, boolean lock) {
-        return db.UnLockCard(id, lock);
+    public void lockOrUnlockCard(String id, boolean lock) {
+        db.UnLockCard(id, lock);
     }
 }

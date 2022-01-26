@@ -25,8 +25,8 @@ public class UserDBHandler {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        if(returnValue == 0) return "false";
-        else return "true";
+        if(returnValue == 0) return "{\"code\": \"400\", \"message\": \"creating user failed\"}";
+        else return "{\"code\": \"200\", \"message\": \"user created\"}";
     }
 
     public String checkLoginCredentials(JsonNode credentials) {
@@ -42,11 +42,11 @@ public class UserDBHandler {
             String resultString = Boolean.toString(result.next());
             preparedStatement.close();
             conn.close();
-            return resultString;
+            if (resultString.equals("true")) return "{\"code\": \"200\", \"message\": \"" + resultString +" \"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "action failed";
+        return "{\"code\": \"400\", \"message\": \"select of user data failed\"}";
     }
 
     public String selectUserData(String username) {
@@ -67,11 +67,11 @@ public class UserDBHandler {
             String s = resultString.toString();
             preparedStatement.close();
             conn.close();
-            return s;
+            return "{\"code\": \"200\", \"message\": \"" + s +" \"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "user not found";
+        return "{\"code\": \"404\", \"message\": \"user not found\"}";
     }
 
     public int selectUserCoins(String username) {
@@ -111,11 +111,11 @@ public class UserDBHandler {
                     .append("\", \"elo\":\"").append(result.getInt(3)).append("\"}").toString();
             preparedStatement.close();
             conn.close();
-            return s;
+            return "{\"code\": \"200\", \"message\": \"" + s +" \"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "user not found";
+        return "{\"code\": \"404\", \"message\": \"user not found\"}";
     }
 
     public void updateUserCoins(int newCoinValue, String username) {
@@ -168,11 +168,31 @@ public class UserDBHandler {
             String s = returnString.toString();
             preparedStatement.close();
             conn.close();
-            return s;
+            return "{\"code\": \"200\", \"message\": \"" + s +" \"}";
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "error in scoreboard";
+        return "{\"code\": \"400\", \"message\": \"cant get scoreboard\"}";
+    }
+
+    public int selectELO(String username) {
+        int returnValue = -1;
+        try {
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+            SELECT elo FROM users
+            WHERE username = ?
+            """);
+            preparedStatement.setString(1, username);
+            ResultSet result = preparedStatement.executeQuery();
+            if(result.next()) returnValue = result.getInt(1);
+            preparedStatement.close();
+            conn.close();
+            return returnValue;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return returnValue;
     }
 
 }
