@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class PackageDBHandler {
 
     public int insertPackage(int cost) {
-        int returnValue = 0;
+        int returnValue = -1;
         try {
             Connection conn = DBconnection.getInstance().getConn();
             PreparedStatement preparedStatement = conn.prepareStatement("""
@@ -29,7 +29,7 @@ public class PackageDBHandler {
     }
 
     public int selectPackage() {
-        int returnInt = 0;
+        int returnInt = -1;
         try {
             Connection conn = DBconnection.getInstance().getConn();
             PreparedStatement preparedStatement = conn.prepareStatement("""
