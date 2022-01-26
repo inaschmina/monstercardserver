@@ -3,7 +3,6 @@ package db;
 import card.Card;
 import card.Monstercard;
 import card.Spellcard;
-import com.google.gson.JsonObject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,23 +28,64 @@ public class BattleDBHandler {
         }
     }
 
-    public void updateUserStats(String username, int won, int lost, int elo) {
+    public void updateUserStats(String username, int won, int lost, int elo, int ratio) {
         try {
             Connection conn = DBconnection.getInstance().getConn();
             PreparedStatement preparedStatement = conn.prepareStatement("""
-            UPDATE users SET won = ?, lost = ?, elo = ?
+            UPDATE users SET won = ?, lost = ?, elo = ?, lose_win_ratio = ?
             WHERE username=?
             """);
             preparedStatement.setInt(1, won);
             preparedStatement.setInt(2, lost);
             preparedStatement.setInt(3, elo);
-            preparedStatement.setString(4, username);
+            preparedStatement.setInt(4, ratio);
+            preparedStatement.setString(5, username);
             preparedStatement.execute();
             preparedStatement.close();
             conn.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    public int selectUserWon(String username) {
+        int value = -1;
+        try {
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+            SELECT won FROM users
+            WHERE username=?
+            """);
+            preparedStatement.setString(1, username);
+            ResultSet result = preparedStatement.executeQuery();
+            if(result.next()) value = result.getInt(1);
+            preparedStatement.close();
+            conn.close();
+            return value;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return -1;
+    }
+
+    public int selectUserLost(String username) {
+        int value = -1;
+        try {
+            Connection conn = DBconnection.getInstance().getConn();
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+            SELECT lost FROM users
+            WHERE username=?
+            """);
+            preparedStatement.setString(1, username);
+            ResultSet result = preparedStatement.executeQuery();
+            if(result.next()) value = result.getInt(1);
+            preparedStatement.close();
+            conn.close();
+            return value;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return -1;
     }
 
     public String getOpponent() {

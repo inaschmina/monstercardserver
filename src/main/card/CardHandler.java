@@ -3,8 +3,6 @@ package card;
 import db.CardDBHandler;
 import org.codehaus.jackson.JsonNode;
 
-import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Objects;
 
 public class CardHandler {

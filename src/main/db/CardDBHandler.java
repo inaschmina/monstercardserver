@@ -152,7 +152,7 @@ public class CardDBHandler {
             String returnString = resultString.toString();
             preparedStatement.close();
             conn.close();
-            return "{\"code\": \"200\", \"message\": \""+ returnString + "\"}";
+            return returnString;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

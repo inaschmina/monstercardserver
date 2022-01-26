@@ -29,7 +29,8 @@ public class BattleLogicHandler {
             logger.log(userCard.getName() + " vs. " + opponentCard.getName());
             Card loser = checkSpeciallity(userCard, opponentCard);
             //if looser isn't clear because of speciality actual battle is fought
-            if(loser == null) loser = battleCards(userCard, opponentCard);
+            if(loser == null && (rounds % 10 == 0)) loser = luckyRound(userCard, opponentCard);
+            else if(loser == null) loser = battleCards(userCard, opponentCard);
             //if loser still null battle was a draw if ot there is a winner and a looser
             if (loser != null) {
                 if (loser == userCard) {
@@ -62,6 +63,22 @@ public class BattleLogicHandler {
         logger.log("Stats have been updated");
     }
 
+    private Card luckyRound(Card card1, Card card2) {
+        //every tenth round a lucky one is randomly chosen that may attack with their own + the others strength
+        int random = (int) (Math.floor(Math.random() * 2));
+        double oldDamageCard1 = card1.getDamage();
+        double oldDamageCard2 = card2.getDamage();
+        switch(random) {
+            case 0 -> card1.setDamage(card1.getDamage() + card2.getDamage());
+            case 1 -> card2.setDamage(card2.getDamage() + card1.getDamage());
+        }
+        Card loser = battleCards(card1, card2);
+        //afterwars damage is reset to normal
+        card1.setDamage(oldDamageCard1);
+        card2.setDamage(oldDamageCard2);
+        return loser;
+    }
+
     private int calculateELO(int elo1, int elo2, double result) {
         int k = 40;
         int Ea;
@@ -75,7 +92,6 @@ public class BattleLogicHandler {
 
     public Card battleCards(Card user, Card opponent) {
         //only if spell is involved elements matter
-
         if(user.getName().toLowerCase().contains("spell") || opponent.getName().toLowerCase().contains("spell")) {
             if(Objects.equals(user.getElement(), "fire") && Objects.equals(opponent.getElement(), "water")) {
                 logger.log("water beat fire");

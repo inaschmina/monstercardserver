@@ -1,7 +1,4 @@
 package battle;
-
-import com.google.gson.JsonObject;
-
 import java.util.Objects;
 
 public class Battle {

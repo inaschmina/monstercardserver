@@ -1,9 +1,10 @@
 package com.company;
 
-import java.io.*;
+import HttpRequest.RequestHandlerImpl;
+
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import HttpRequest.RequestHandlerImpl;
 
 public class Main {
 

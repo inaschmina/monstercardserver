@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/src/db/BattleDBHandler.java" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/db/CardDBHandler.java" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/db/PackageDBHandler.java" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/db/TradingsDBHandler.java" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/db/UserDBHandler.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/db/BattleDBHandler.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/db/CardDBHandler.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/db/PackageDBHandler.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/db/TradingsDBHandler.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/db/UserDBHandler.java" dialect="GenericSQL" />
   </component>
 </project>

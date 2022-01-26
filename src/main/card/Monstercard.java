@@ -1,8 +1,5 @@
 package card;
 
-import com.google.gson.annotations.SerializedName;
-import lombok.Getter;
-
 public class Monstercard implements Card{
     String id;
     String name;

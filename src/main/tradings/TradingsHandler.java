@@ -16,7 +16,7 @@ public class TradingsHandler {
 
     public String createTradingDeal(JsonNode credentials) {
         CardHandler cardHandler = new CardHandler();
-        cardHandler.lockOrUnlockCard(credentials.get("Id").getTextValue(), true);
+        cardHandler.lockOrUnlockCard(credentials.get("CardToTrade").getTextValue(), true);
         return db.insertTrade(credentials);
     }
 
